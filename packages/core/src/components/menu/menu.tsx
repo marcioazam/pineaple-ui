@@ -2,12 +2,29 @@ import * as React from 'react';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { cn } from '@pineapple-ui/utils';
 
-export const Menu = DropdownMenuPrimitive.Root;
-export const MenuTrigger = DropdownMenuPrimitive.Trigger;
-export const MenuGroup = DropdownMenuPrimitive.Group;
-export const MenuPortal = DropdownMenuPrimitive.Portal;
-export const MenuSub = DropdownMenuPrimitive.Sub;
-export const MenuRadioGroup = DropdownMenuPrimitive.RadioGroup;
+const MenuRoot = DropdownMenuPrimitive.Root;
+(MenuRoot as { displayName?: string }).displayName = 'Menu';
+export { MenuRoot as Menu };
+
+const MenuTriggerPrimitive = DropdownMenuPrimitive.Trigger;
+(MenuTriggerPrimitive as { displayName?: string }).displayName = 'MenuTrigger';
+export { MenuTriggerPrimitive as MenuTrigger };
+
+const MenuGroupPrimitive = DropdownMenuPrimitive.Group;
+(MenuGroupPrimitive as { displayName?: string }).displayName = 'MenuGroup';
+export { MenuGroupPrimitive as MenuGroup };
+
+const MenuPortalPrimitive = DropdownMenuPrimitive.Portal;
+(MenuPortalPrimitive as { displayName?: string }).displayName = 'MenuPortal';
+export { MenuPortalPrimitive as MenuPortal };
+
+const MenuSubPrimitive = DropdownMenuPrimitive.Sub;
+(MenuSubPrimitive as { displayName?: string }).displayName = 'MenuSub';
+export { MenuSubPrimitive as MenuSub };
+
+const MenuRadioGroupPrimitive = DropdownMenuPrimitive.RadioGroup;
+(MenuRadioGroupPrimitive as { displayName?: string }).displayName = 'MenuRadioGroup';
+export { MenuRadioGroupPrimitive as MenuRadioGroup };
 
 export const MenuSubTrigger = React.forwardRef<
   React.ElementRef<typeof DropdownMenuPrimitive.SubTrigger>,

@@ -42,5 +42,16 @@ export function Dropdown({ trigger, triggerProps, children, align = 'start' }: D
 
 Dropdown.displayName = 'Dropdown';
 
-export const DropdownItem = MenuItem;
-export const DropdownSeparator = MenuSeparator;
+export const DropdownItem = React.forwardRef<
+  React.ElementRef<typeof MenuItem>,
+  React.ComponentPropsWithoutRef<typeof MenuItem>
+>((props, ref) => <MenuItem ref={ref} {...props} />);
+
+DropdownItem.displayName = 'DropdownItem';
+
+export const DropdownSeparator = React.forwardRef<
+  React.ElementRef<typeof MenuSeparator>,
+  React.ComponentPropsWithoutRef<typeof MenuSeparator>
+>((props, ref) => <MenuSeparator ref={ref} {...props} />);
+
+DropdownSeparator.displayName = 'DropdownSeparator';

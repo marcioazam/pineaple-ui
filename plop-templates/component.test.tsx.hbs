@@ -1,0 +1,25 @@
+import { describe, it, expect } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import { {{pascalCase name}} } from './{{kebabCase name}}';
+
+describe('{{pascalCase name}} Component', () => {
+  it('should render children', () => {
+    render(<{{pascalCase name}}>Test content</{{pascalCase name}}>);
+    expect(screen.getByText('Test content')).toBeInTheDocument();
+  });
+
+  it('should forward ref', () => {
+    const ref = { current: null };
+    render(<{{pascalCase name}} ref={ref}>Content</{{pascalCase name}}>);
+    expect(ref.current).toBeInstanceOf(HTMLDivElement);
+  });
+
+  it('should have correct displayName', () => {
+    expect({{pascalCase name}}.displayName).toBe('{{pascalCase name}}');
+  });
+
+  it('should apply custom className', () => {
+    render(<{{pascalCase name}} className="custom-class">Content</{{pascalCase name}}>);
+    expect(screen.getByText('Content')).toHaveClass('custom-class');
+  });
+});
