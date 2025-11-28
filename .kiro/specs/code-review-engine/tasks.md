@@ -165,7 +165,10 @@
     - useControllableState
     - useMediaQuery
     - _Requirements: 1.3_
-  - [ ]* 13.3 Escrever testes para hooks
+  - [x] 13.3 Escrever testes para hooks
+
+
+
     - Testar comportamento de cada hook
     - _Requirements: 1.3_
 
@@ -179,12 +182,11 @@
     - Criar configuração base
     - _Requirements: 1.4_
 
-  - [ ] 14.2 Criar template de componente
+  - [x] 14.2 Criar template de componente
     - Template para component.tsx
     - Template para component.styles.ts
     - Template para component.test.tsx
     - Template para index.ts
-
     - _Requirements: 1.4_
 
 
@@ -212,7 +214,7 @@
     - MenuTrigger deve ter displayName 'MenuTrigger' (não 'DropdownMenuTrigger')
     - _Requirements: 2.2_
 
-  - [ ] 16.2 Atualizar Dropdown components para ter displayName consistente
+  - [x] 16.2 Atualizar Dropdown components para ter displayName consistente
     - DropdownItem deve ter displayName 'DropdownItem' (não 'MenuItem')
     - _Requirements: 2.2_
 
