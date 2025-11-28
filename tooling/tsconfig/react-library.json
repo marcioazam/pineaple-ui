@@ -5,8 +5,6 @@
   "compilerOptions": {
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "jsx": "react-jsx",
-    "noEmit": false,
-    "outDir": "./dist",
-    "rootDir": "./src"
+    "noEmit": false
   }
 }
