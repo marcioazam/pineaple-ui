@@ -1263,17 +1263,6 @@ Este projeto foi inspirado e construído sobre o trabalho de projetos incríveis
 - [shadcn/ui](https://ui.shadcn.com/) - Inspiração de design
 - [Chakra UI](https://chakra-ui.com/) - Padrões de API
 
----
-
-## 📞 Suporte
-
-- 📖 [Documentação](https://pineapple-ui.dev/docs)
-- 💬 [Discussões GitHub](https://github.com/pineapple-ui/pineapple-ui/discussions)
-- 🐛 [Issues](https://github.com/pineapple-ui/pineapple-ui/issues)
-- 🐦 [Twitter](https://twitter.com/pineapple_ui)
-
----
-
 <p align="center">
   <img src="pineapple.png" alt="Pineapple UI" width="60" />
 </p>
