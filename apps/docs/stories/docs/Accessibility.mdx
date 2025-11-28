@@ -1,0 +1,144 @@
+{/* Accessibility.mdx */}
+import { Meta } from '@storybook/blocks';
+
+<Meta title="Guides/Accessibility" />
+
+# Accessibility
+
+Pineapple UI is built with accessibility as a core principle. All components follow WCAG 2.2 Level AA guidelines.
+
+## Core Principles
+
+### Perceivable
+
+- All interactive elements have visible focus indicators
+- Color is not the only means of conveying information
+- Text has sufficient contrast ratios (4.5:1 for normal text, 3:1 for large text)
+
+### Operable
+
+- All functionality is available via keyboard
+- Focus order follows a logical sequence
+- No keyboard traps exist in any component
+
+### Understandable
+
+- Labels and instructions are clear
+- Error messages are descriptive and helpful
+- Behavior is predictable and consistent
+
+### Robust
+
+- Components use semantic HTML
+- ARIA attributes are applied correctly
+- Works with assistive technologies
+
+## Keyboard Navigation
+
+### Global Patterns
+
+| Key | Action |
+|-----|--------|
+| `Tab` | Move focus to next focusable element |
+| `Shift + Tab` | Move focus to previous focusable element |
+| `Enter` | Activate focused element |
+| `Space` | Activate focused element (buttons, checkboxes) |
+| `Escape` | Close modals, dropdowns, tooltips |
+| `Arrow Keys` | Navigate within composite widgets |
+
+### Component-Specific
+
+#### Menu / Dropdown
+- `Arrow Down/Up` - Navigate items
+- `Enter/Space` - Select item
+- `Escape` - Close menu
+- `Home/End` - Jump to first/last item
+
+#### Tabs
+- `Arrow Left/Right` - Switch tabs
+- `Home/End` - Jump to first/last tab
+
+#### Dialog
+- `Tab` - Cycle through focusable elements (trapped)
+- `Escape` - Close dialog
+
+## ARIA Patterns
+
+### Buttons
+
+```tsx
+// Standard button
+<Button>Click me</Button>
+// Renders: <button type="button">Click me</button>
+
+// Loading state
+<Button loading>Loading...</Button>
+// Renders: <button type="button" aria-busy="true" disabled>Loading...</button>
+```
+
+### Form Fields
+
+```tsx
+// Required field
+<Input required />
+// Renders: <input aria-required="true" />
+
+// Error state
+<FormField error="Invalid email">
+  <Input error />
+</FormField>
+// Renders: <input aria-invalid="true" aria-describedby="error-id" />
+```
+
+### Dialogs
+
+```tsx
+<Dialog>
+  <DialogContent>
+    <DialogTitle>Title</DialogTitle>
+    <DialogDescription>Description</DialogDescription>
+  </DialogContent>
+</Dialog>
+// Renders with role="dialog", aria-modal="true", aria-labelledby, aria-describedby
+```
+
+## Testing Accessibility
+
+### Automated Testing
+
+We use `axe-core` for automated accessibility testing:
+
+```tsx
+import { axe, toHaveNoViolations } from 'jest-axe';
+
+expect.extend(toHaveNoViolations);
+
+it('should have no accessibility violations', async () => {
+  const { container } = render(<Button>Click me</Button>);
+  const results = await axe(container);
+  expect(results).toHaveNoViolations();
+});
+```
+
+### Manual Testing
+
+1. Navigate using only keyboard
+2. Test with screen readers (NVDA, VoiceOver, JAWS)
+3. Check color contrast with browser dev tools
+4. Verify focus indicators are visible
+5. Test at 200% zoom level
+
+## Screen Reader Support
+
+Pineapple UI is tested with:
+
+- NVDA (Windows)
+- VoiceOver (macOS/iOS)
+- JAWS (Windows)
+- TalkBack (Android)
+
+## Resources
+
+- [WCAG 2.2 Guidelines](https://www.w3.org/WAI/WCAG22/quickref/)
+- [WAI-ARIA Authoring Practices](https://www.w3.org/WAI/ARIA/apg/)
+- [Inclusive Components](https://inclusive-components.design/)

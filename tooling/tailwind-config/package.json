@@ -1,0 +1,14 @@
+{
+  "name": "@pineapple-ui/tailwind-config",
+  "version": "0.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./index.js",
+    "./theme": "./theme.js"
+  },
+  "dependencies": {
+    "tailwindcss": "^4.0.0"
+  }
+}

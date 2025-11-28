@@ -1,0 +1,17 @@
+{
+  "extends": "@pineapple-ui/tsconfig/react-library.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": ".",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    }
+  },
+  "include": [
+    ".storybook/**/*",
+    "stories/**/*",
+    "styles/**/*"
+  ],
+  "exclude": ["node_modules", "dist"]
+}

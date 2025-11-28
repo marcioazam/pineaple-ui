@@ -1,0 +1,82 @@
+import * as React from 'react';
+import { cn } from '@pineapple-ui/utils';
+
+export interface FormFieldProps {
+  /** Unique ID for the form field */
+  id?: string;
+  /** Label text */
+  label?: string;
+  /** Error message */
+  error?: string;
+  /** Helper text */
+  helperText?: string;
+  /** Whether the field is required */
+  required?: boolean;
+  /** Additional class names */
+  className?: string;
+  /** Form control element */
+  children: React.ReactElement;
+}
+
+/**
+ * FormField wrapper component with Label, Input, and ErrorMessage slots.
+ * Implements aria-describedby linking for errors.
+ *
+ * @example
+ * ```tsx
+ * <FormField label="Email" error="Invalid email" required>
+ *   <Input type="email" />
+ * </FormField>
+ * ```
+ */
+export function FormField({
+  id: providedId,
+  label,
+  error,
+  helperText,
+  required,
+  className,
+  children,
+}: FormFieldProps) {
+  const generatedId = React.useId();
+  const id = providedId ?? generatedId;
+  const errorId = `${id}-error`;
+  const helperId = `${id}-helper`;
+
+  const describedBy = [error ? errorId : null, helperText ? helperId : null]
+    .filter(Boolean)
+    .join(' ') || undefined;
+
+  // Clone child with additional props
+  const childWithProps = React.cloneElement(children, {
+    id,
+    'aria-describedby': describedBy,
+    'aria-invalid': error ? true : undefined,
+    required,
+    error: !!error,
+  } as React.Attributes & Record<string, unknown>);
+
+  return (
+    <div className={cn('flex flex-col gap-1.5', className)}>
+      {label && (
+        <label htmlFor={id} className="text-sm font-medium text-neutral-700">
+          {label}
+          {required && <span className="text-danger-500 ml-1">*</span>}
+        </label>
+      )}
+      {childWithProps}
+      {error && (
+        <p id={errorId} className="text-sm text-danger-500" role="alert">
+          {error}
+        </p>
+      )}
+      {helperText && !error && (
+        <p id={helperId} className="text-sm text-neutral-500">
+          {helperText}
+        </p>
+      )}
+    </div>
+  );
+}
+
+FormField.displayName = 'FormField';
