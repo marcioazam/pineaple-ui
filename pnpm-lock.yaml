@@ -82,31 +82,61 @@ importers:
         version: 19.2.0(react@19.2.0)
     devDependencies:
       '@storybook/addon-a11y':
-        specifier: ^8.4.7
+        specifier: ^8.6.14
+        version: 8.6.14(storybook@8.6.14(prettier@3.7.1))
+      '@storybook/addon-actions':
+        specifier: ^8.6.14
+        version: 8.6.14(storybook@8.6.14(prettier@3.7.1))
+      '@storybook/addon-backgrounds':
+        specifier: ^8.6.14
+        version: 8.6.14(storybook@8.6.14(prettier@3.7.1))
+      '@storybook/addon-controls':
+        specifier: ^8.6.14
         version: 8.6.14(storybook@8.6.14(prettier@3.7.1))
       '@storybook/addon-docs':
-        specifier: ^8.4.7
+        specifier: ^8.6.14
         version: 8.6.14(@types/react@19.2.7)(storybook@8.6.14(prettier@3.7.1))
       '@storybook/addon-essentials':
-        specifier: ^8.4.7
+        specifier: ^8.6.14
         version: 8.6.14(@types/react@19.2.7)(storybook@8.6.14(prettier@3.7.1))
+      '@storybook/addon-highlight':
+        specifier: ^8.6.14
+        version: 8.6.14(storybook@8.6.14(prettier@3.7.1))
       '@storybook/addon-interactions':
-        specifier: ^8.4.7
+        specifier: ^8.6.14
         version: 8.6.14(storybook@8.6.14(prettier@3.7.1))
       '@storybook/addon-links':
-        specifier: ^8.4.7
+        specifier: ^8.6.14
         version: 8.6.14(react@19.2.0)(storybook@8.6.14(prettier@3.7.1))
+      '@storybook/addon-measure':
+        specifier: ^8.6.14
+        version: 8.6.14(storybook@8.6.14(prettier@3.7.1))
+      '@storybook/addon-outline':
+        specifier: ^8.6.14
+        version: 8.6.14(storybook@8.6.14(prettier@3.7.1))
+      '@storybook/addon-toolbars':
+        specifier: ^8.6.14
+        version: 8.6.14(storybook@8.6.14(prettier@3.7.1))
+      '@storybook/addon-viewport':
+        specifier: ^8.6.14
+        version: 8.6.14(storybook@8.6.14(prettier@3.7.1))
       '@storybook/blocks':
-        specifier: ^8.4.7
+        specifier: ^8.6.14
         version: 8.6.14(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@8.6.14(prettier@3.7.1))
+      '@storybook/global':
+        specifier: ^5.0.0
+        version: 5.0.0
+      '@storybook/instrumenter':
+        specifier: ^8.6.14
+        version: 8.6.14(storybook@8.6.14(prettier@3.7.1))
       '@storybook/react':
-        specifier: ^8.4.7
+        specifier: ^8.6.14
         version: 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.7.1)))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(storybook@8.6.14(prettier@3.7.1))(typescript@5.9.3)
       '@storybook/react-vite':
-        specifier: ^8.4.7
+        specifier: ^8.6.14
         version: 8.6.14(@storybook/test@8.6.14(storybook@8.6.14(prettier@3.7.1)))(react-dom@19.2.0(react@19.2.0))(react@19.2.0)(rollup@4.53.3)(storybook@8.6.14(prettier@3.7.1))(typescript@5.9.3)(vite@6.4.1(@types/node@22.19.1))
       '@storybook/test':
-        specifier: ^8.4.7
+        specifier: ^8.6.14
         version: 8.6.14(storybook@8.6.14(prettier@3.7.1))
       '@types/react':
         specifier: ^19.0.1
@@ -120,11 +150,14 @@ importers:
       autoprefixer:
         specifier: ^10.4.20
         version: 10.4.22(postcss@8.5.6)
+      polished:
+        specifier: ^4.3.1
+        version: 4.3.1
       postcss:
         specifier: ^8.4.49
         version: 8.5.6
       storybook:
-        specifier: ^8.4.7
+        specifier: ^8.6.14
         version: 8.6.14(prettier@3.7.1)
       tailwindcss:
         specifier: ^4.0.0
@@ -5477,8 +5510,8 @@ snapshots:
       '@storybook/theming': 8.6.14(storybook@8.6.14(prettier@3.7.1))
       better-opn: 3.0.2
       browser-assert: 1.2.1
-      esbuild: 0.21.5
-      esbuild-register: 3.6.0(esbuild@0.21.5)
+      esbuild: 0.25.12
+      esbuild-register: 3.6.0(esbuild@0.25.12)
       jsdoc-type-pratt-parser: 4.8.0
       process: 0.11.10
       recast: 0.23.11
@@ -6369,10 +6402,10 @@ snapshots:
       is-date-object: 1.1.0
       is-symbol: 1.1.1
 
-  esbuild-register@3.6.0(esbuild@0.21.5):
+  esbuild-register@3.6.0(esbuild@0.25.12):
     dependencies:
       debug: 4.4.3
-      esbuild: 0.21.5
+      esbuild: 0.25.12
     transitivePeerDependencies:
       - supports-color
 
