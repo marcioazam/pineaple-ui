@@ -30,6 +30,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "@pineapple-ui/icons": "workspace:*",
     "@pineapple-ui/primitives": "workspace:*",
     "@pineapple-ui/tokens": "workspace:*",
     "@pineapple-ui/utils": "workspace:*",

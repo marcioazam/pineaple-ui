@@ -1,0 +1,32 @@
+name: Auto Approve Dependabot
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  # Auto-approve PRs do Dependabot (opcional)
+  auto-approve-dependabot:
+    name: Auto Approve Dependabot
+    runs-on: ubuntu-latest
+    if: github.actor == 'dependabot[bot]'
+    steps:
+      - name: Approve PR
+        uses: hmarr/auto-approve-action@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  # Auto-approve PRs de bots confiáveis
+  auto-approve-bots:
+    name: Auto Approve Trusted Bots
+    runs-on: ubuntu-latest
+    if: contains(fromJson('["dependabot[bot]", "renovate[bot]"]'), github.actor)
+    steps:
+      - name: Approve PR
+        uses: hmarr/auto-approve-action@v4
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}

@@ -125,4 +125,69 @@ describe('Button Component', () => {
     // Verify styles are merged onto the child
     expect(link.className).toContain('bg-primary-500');
   });
+
+  /**
+   * **Feature: code-review-engine, Property 2: Button Loading State Preservation**
+   * **Validates: Requirements 2.4**
+   *
+   * For any Button component with loading=true, regardless of the asChild prop value,
+   * the button SHALL be disabled AND display a loading indicator AND have aria-busy.
+   */
+  it('should preserve loading state regardless of asChild prop', () => {
+    fc.assert(
+      fc.property(
+        fc.boolean(), // asChild
+        (asChild) => {
+          const { container, unmount } = render(
+            <Button asChild={asChild} loading data-testid="btn">
+              {asChild ? <a href="/test">Link</a> : 'Button'}
+            </Button>
+          );
+
+          const element = container.querySelector('[data-testid="btn"]') as HTMLElement;
+
+          // Should have aria-busy when loading
+          expect(element).toHaveAttribute('aria-busy', 'true');
+
+          // Should have aria-disabled when loading
+          expect(element).toHaveAttribute('aria-disabled', 'true');
+
+          // Should have spinner (svg with animate-spin class)
+          const spinner = container.querySelector('svg.animate-spin');
+          expect(spinner).toBeInTheDocument();
+
+          // For non-asChild buttons, should be disabled
+          if (!asChild) {
+            expect(element).toBeDisabled();
+          }
+
+          unmount();
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  /**
+   * **Feature: code-review-engine, Property 2: Button Loading State Preservation**
+   * **Validates: Requirements 2.4**
+   *
+   * For any Button with loading=true and asChild=true, the loading spinner
+   * SHALL be rendered alongside the child content.
+   */
+  it('should show loading spinner with asChild=true', () => {
+    const { container } = render(
+      <Button asChild loading>
+        <a href="/test">Link Button</a>
+      </Button>
+    );
+
+    // Should have spinner
+    const spinner = container.querySelector('svg.animate-spin');
+    expect(spinner).toBeInTheDocument();
+
+    // Should have aria-busy
+    const link = container.querySelector('a');
+    expect(link).toHaveAttribute('aria-busy', 'true');
+  });
 });

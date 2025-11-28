@@ -1,8 +1,9 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import fc from 'fast-check';
 import { FormField } from './form-field';
 import { Input } from '../input';
+import { InvalidPropError } from '@pineapple-ui/utils';
 
 describe('FormField Component', () => {
   /**
@@ -78,5 +79,81 @@ describe('FormField Component', () => {
 
     const input = screen.getByTestId('input');
     expect(input).toHaveAttribute('aria-invalid', 'true');
+  });
+
+  /**
+   * **Feature: code-review-engine, Property 4: FormField Props Injection**
+   * **Validates: Requirements 5.2**
+   *
+   * For any valid React element passed as children to FormField,
+   * the cloned element SHALL receive the injected props (id, aria-describedby, aria-invalid, required, error)
+   * without runtime errors.
+   */
+  it('should inject props into any valid React element child', () => {
+    fc.assert(
+      fc.property(
+        fc.boolean(), // hasError
+        fc.boolean(), // hasHelperText
+        fc.boolean(), // isRequired
+        (hasError, hasHelperText, isRequired) => {
+          const error = hasError ? 'Error message' : undefined;
+          const helperText = hasHelperText ? 'Helper text' : undefined;
+
+          const { container, unmount } = render(
+            <FormField
+              id="test-id"
+              label="Test Label"
+              error={error}
+              helperText={helperText}
+              required={isRequired}
+            >
+              <Input data-testid="child-input" />
+            </FormField>
+          );
+
+          const input = container.querySelector('[data-testid="child-input"]') as HTMLElement;
+
+          // Should always have id injected
+          expect(input).toHaveAttribute('id', 'test-id');
+
+          // Should have aria-invalid when error is present
+          if (hasError) {
+            expect(input).toHaveAttribute('aria-invalid', 'true');
+            expect(input).toHaveAttribute('aria-describedby', expect.stringContaining('test-id-error'));
+          }
+
+          // Should have aria-describedby for helper text when no error
+          if (hasHelperText && !hasError) {
+            expect(input).toHaveAttribute('aria-describedby', expect.stringContaining('test-id-helper'));
+          }
+
+          unmount();
+        }
+      ),
+      { numRuns: 100 }
+    );
+  });
+
+  /**
+   * **Feature: code-review-engine, Property 7: Error Class Usage**
+   * **Validates: Requirements 11.1, 11.2**
+   *
+   * For any invalid children passed to FormField,
+   * the component SHALL throw an InvalidPropError with proper context.
+   */
+  it('should throw InvalidPropError for invalid children', () => {
+    // Suppress console.error for this test since we expect an error
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    expect(() => {
+      render(
+        <FormField label="Test">
+          {/* @ts-expect-error - Testing invalid children */}
+          {'string is not a valid element'}
+        </FormField>
+      );
+    }).toThrow(InvalidPropError);
+
+    consoleSpy.mockRestore();
   });
 });

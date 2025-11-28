@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { cn } from '@pineapple-ui/utils';
+import { cn, InvalidPropError } from '@pineapple-ui/utils';
 
 export interface FormFieldProps {
   /** Unique ID for the form field */
@@ -43,18 +43,36 @@ export function FormField({
   const errorId = `${id}-error`;
   const helperId = `${id}-helper`;
 
-  const describedBy = [error ? errorId : null, helperText ? helperId : null]
-    .filter(Boolean)
-    .join(' ') || undefined;
+  const describedBy =
+    [error ? errorId : null, helperText ? helperId : null].filter(Boolean).join(' ') || undefined;
 
-  // Clone child with additional props
-  const childWithProps = React.cloneElement(children, {
+  // Validate that children is a valid React element
+  if (!React.isValidElement(children)) {
+    throw new InvalidPropError('FormField', 'children', 'valid React element', children);
+  }
+
+  // Type-safe props to inject into child
+  interface InjectedProps {
+    id: string;
+    'aria-describedby'?: string | undefined;
+    'aria-invalid'?: boolean | undefined;
+    required?: boolean | undefined;
+    error?: boolean | undefined;
+  }
+
+  const injectedProps: InjectedProps = {
     id,
     'aria-describedby': describedBy,
     'aria-invalid': error ? true : undefined,
     required,
     error: !!error,
-  } as React.Attributes & Record<string, unknown>);
+  };
+
+  // Clone child with additional props (type-safe)
+  const childWithProps = React.cloneElement(
+    children as React.ReactElement<InjectedProps>,
+    injectedProps
+  );
 
   return (
     <div className={cn('flex flex-col gap-1.5', className)}>
