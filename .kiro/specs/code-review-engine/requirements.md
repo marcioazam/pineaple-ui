@@ -2,160 +2,280 @@
 
 ## Introduction
 
-The Code Review Engine is a systematic code analysis tool that performs automated code reviews following industry best practices. It provides severity-based findings, mandatory refactoring recommendations for large files, test coverage analysis, and quality scoring. The engine operates in read-only mode, producing actionable review reports without modifying source files. It integrates with the existing Pineapple UI monorepo to analyze TypeScript/React code and outputs structured reports in Markdown or JSON format.
+Este documento apresenta uma análise profunda de code review do projeto **Pineapple UI**, uma biblioteca de componentes React moderna, acessível e altamente customizável. A análise identifica pontos de melhoria em arquitetura, padrões de código, segurança, performance, acessibilidade e manutenibilidade, seguindo as melhores práticas da indústria.
 
 ## Glossary
 
-- **Code_Review_Engine**: The automated code analysis system being developed
-- **Finding**: A specific issue identified during code review with severity, location, and remediation guidance
-- **Quality_Score**: A numeric score (0-100) representing overall code quality based on multiple dimensions
-- **Severity_Level**: Classification of finding importance (CRITICAL, HIGH, MEDIUM, LOW)
-- **Refactoring_Plan**: A structured recommendation for splitting or reorganizing code files exceeding size limits
-- **Cyclomatic_Complexity**: A metric measuring the number of linearly independent paths through code
-- **Code_Duplication**: Repeated code blocks that violate DRY (Don't Repeat Yourself) principle
-- **OWASP**: Open Web Application Security Project - security vulnerability standards
-- **Effort_Estimate**: Time/complexity estimate for fixing an issue (XS, S, M, L, XL)
-- **Diff**: A representation of changes between code versions
-- **AST**: Abstract Syntax Tree - parsed representation of source code structure
-- **Review_Mode**: Analysis depth setting (quick for fast feedback, deep for comprehensive analysis)
+- **CVA (Class Variance Authority)**: Biblioteca para gerenciar variantes de classes CSS de forma type-safe
+- **Design Tokens**: Variáveis que armazenam valores de design como cores, espaçamentos, tipografia
+- **oklch**: Espaço de cor perceptualmente uniforme usado para manipulação de cores
+- **Headless Components**: Componentes sem estilo que fornecem apenas comportamento e acessibilidade
+- **Property-Based Testing (PBT)**: Técnica de teste que verifica propriedades universais com inputs aleatórios
+- **WCAG**: Web Content Accessibility Guidelines - diretrizes de acessibilidade web
+- **DRY**: Don't Repeat Yourself - princípio de não repetir código
+- **SOLID**: Princípios de design orientado a objetos (Single Responsibility, Open/Closed, etc.)
 
-## Requirements
+---
 
-### Requirement 1
+## Análise de Arquitetura
 
-**User Story:** As a developer, I want to submit code for review, so that I can receive automated feedback on code quality issues.
+### Requirement 1: Estrutura de Monorepo
+
+**User Story:** Como desenvolvedor, quero uma estrutura de monorepo bem organizada, para que eu possa navegar e manter o código facilmente.
 
 #### Acceptance Criteria
 
-1. WHEN a developer provides a diff string THEN Code_Review_Engine SHALL parse and analyze the changed code
-2. WHEN a developer provides a file path THEN Code_Review_Engine SHALL read and analyze the file contents
-3. WHEN invalid input is provided THEN Code_Review_Engine SHALL return a validation error with clear message
-4. WHEN analysis mode is specified as "quick" THEN Code_Review_Engine SHALL complete analysis within 5 seconds
-5. WHEN analysis mode is specified as "deep" THEN Code_Review_Engine SHALL perform comprehensive multi-pass analysis
+1. ✅ **APROVADO**: A estrutura de pacotes está bem organizada com separação clara de responsabilidades (`core`, `primitives`, `tokens`, `icons`, `utils`)
+2. ✅ **APROVADO**: O uso de Turborepo com cache inteligente otimiza builds
+3. ⚠️ **MELHORIA**: WHEN o projeto cresce THEN o sistema SHOULD ter um pacote `@pineapple-ui/hooks` separado para hooks reutilizáveis
+4. ⚠️ **MELHORIA**: WHEN componentes são criados THEN o sistema SHOULD ter um gerador de scaffolding (plop/hygen) para padronizar estrutura
 
-### Requirement 2
+---
 
-**User Story:** As a developer, I want findings categorized by severity, so that I can prioritize which issues to fix first.
+## Análise de Componentes Core
 
-#### Acceptance Criteria
+### Requirement 2: Padrões de Componentes
 
-1. WHEN a security vulnerability is detected THEN Code_Review_Engine SHALL classify the finding as CRITICAL severity
-2. WHEN a correctness issue is detected THEN Code_Review_Engine SHALL classify the finding as HIGH severity
-3. WHEN a maintainability issue is detected THEN Code_Review_Engine SHALL classify the finding as MEDIUM severity
-4. WHEN a style issue is detected THEN Code_Review_Engine SHALL classify the finding as LOW severity
-5. WHEN findings are reported THEN Code_Review_Engine SHALL sort them by severity in descending order (CRITICAL first)
-
-### Requirement 3
-
-**User Story:** As a developer, I want each finding to include file and line location, so that I can quickly navigate to the problematic code.
+**User Story:** Como desenvolvedor, quero componentes consistentes e bem estruturados, para que eu possa entender e estender facilmente.
 
 #### Acceptance Criteria
 
-1. WHEN a finding is generated THEN Code_Review_Engine SHALL include the file path in the finding
-2. WHEN a finding is generated THEN Code_Review_Engine SHALL include the line number where the issue starts
-3. WHEN a finding spans multiple lines THEN Code_Review_Engine SHALL include both start and end line numbers
-4. WHEN a finding is serialized to JSON THEN parsing the JSON SHALL produce equivalent finding data (round-trip consistency)
+1. ✅ **APROVADO**: Todos os componentes usam `forwardRef` corretamente
+2. ✅ **APROVADO**: Todos os componentes têm `displayName` definido
+3. ⚠️ **MELHORIA**: WHEN um componente é criado THEN o componente SHOULD exportar seus tipos de props separadamente para facilitar extensão
+4. ❌ **CRÍTICO**: WHEN o Button está em estado `loading` com `asChild=true` THEN o sistema SHALL manter o comportamento de loading (atualmente ignorado)
 
-### Requirement 4
+**Código Problemático (button.tsx:63-72):**
+```typescript
+// Quando asChild é true, o loading state é ignorado
+if (asChild) {
+  return (
+    <Comp
+      ref={ref}
+      className={cn(buttonVariants({ variant, size }), className)}
+      {...props}
+    >
+      {children}
+    </Comp>
+  );
+}
+```
 
-**User Story:** As a developer, I want mandatory refactoring recommendations for large files, so that I can maintain manageable code modules.
+---
 
-#### Acceptance Criteria
+### Requirement 3: Consistência de Estilos
 
-1. WHEN a file exceeds 400 lines THEN Code_Review_Engine SHALL flag the file for mandatory refactoring
-2. WHEN a file requires refactoring THEN Code_Review_Engine SHALL suggest specific extraction targets (classes, functions, modules)
-3. WHEN multiple large files exist THEN Code_Review_Engine SHALL prioritize refactoring by file size descending
-4. WHEN a refactoring plan is generated THEN Code_Review_Engine SHALL estimate effort level (S, M, L, XL)
-5. WHEN a file is exactly 400 lines or fewer THEN Code_Review_Engine SHALL NOT flag it for mandatory refactoring
-
-### Requirement 5
-
-**User Story:** As a developer, I want security vulnerability detection, so that I can identify and fix security issues before deployment.
-
-#### Acceptance Criteria
-
-1. WHEN SQL injection patterns are detected THEN Code_Review_Engine SHALL report a CRITICAL security finding
-2. WHEN hardcoded secrets or credentials are detected THEN Code_Review_Engine SHALL report a CRITICAL security finding
-3. WHEN XSS vulnerability patterns are detected THEN Code_Review_Engine SHALL report a HIGH security finding
-4. WHEN missing input validation is detected THEN Code_Review_Engine SHALL report a MEDIUM security finding
-5. WHEN security findings are reported THEN Code_Review_Engine SHALL include OWASP category reference
-
-### Requirement 6
-
-**User Story:** As a developer, I want code complexity analysis, so that I can identify functions that are too complex and need simplification.
+**User Story:** Como desenvolvedor, quero estilos consistentes entre componentes, para que a UI seja coesa.
 
 #### Acceptance Criteria
 
-1. WHEN a function has cyclomatic complexity greater than 10 THEN Code_Review_Engine SHALL flag it as high complexity
-2. WHEN a function exceeds 50 lines THEN Code_Review_Engine SHALL recommend extraction or simplification
-3. WHEN nesting depth exceeds 3 levels THEN Code_Review_Engine SHALL recommend flattening with early returns
-4. WHEN complexity metrics are calculated THEN Code_Review_Engine SHALL include the numeric value in the finding
-5. WHEN a function has 4 or more parameters THEN Code_Review_Engine SHALL recommend using an options object
+1. ⚠️ **MELHORIA**: WHEN estilos são definidos THEN o sistema SHOULD extrair estilos para arquivos `.styles.ts` separados (Card, Alert, Toast não seguem este padrão)
+2. ⚠️ **MELHORIA**: WHEN variantes são definidas THEN o sistema SHOULD usar constantes para valores repetidos de cores e espaçamentos
+3. ❌ **INCONSISTÊNCIA**: WHEN cores são usadas THEN o sistema SHALL usar tokens consistentes (Card usa `bg-white` hardcoded ao invés de token)
 
-### Requirement 7
+**Componentes sem arquivo de estilos separado:**
+- `alert.tsx` - define `alertVariants` inline
+- `card.tsx` - define `cardVariants` inline
+- `toast.tsx` - define `toastVariants` inline
+- `flex.tsx` - define `flexVariants` inline
+- `select.tsx` - define múltiplas variantes inline
 
-**User Story:** As a developer, I want code duplication detection, so that I can identify repeated code blocks that should be extracted.
+---
 
-#### Acceptance Criteria
+### Requirement 4: Duplicação de Código
 
-1. WHEN a code block of 5+ lines is repeated 3+ times THEN Code_Review_Engine SHALL flag it as duplication
-2. WHEN duplication is detected THEN Code_Review_Engine SHALL list all locations where the duplicate appears
-3. WHEN duplication is reported THEN Code_Review_Engine SHALL suggest an extraction strategy
-4. WHEN calculating duplication percentage THEN Code_Review_Engine SHALL report the ratio of duplicated to total lines
-
-### Requirement 8
-
-**User Story:** As a developer, I want test coverage gap identification, so that I can ensure critical code paths are tested.
+**User Story:** Como desenvolvedor, quero código DRY, para que manutenção seja mais fácil.
 
 #### Acceptance Criteria
 
-1. WHEN a public function lacks test coverage THEN Code_Review_Engine SHALL report a coverage gap
-2. WHEN coverage is below the target threshold (default 80%) THEN Code_Review_Engine SHALL flag the file
-3. WHEN critical paths (auth, payment, data mutation) lack tests THEN Code_Review_Engine SHALL report HIGH severity
-4. WHEN coverage gaps are reported THEN Code_Review_Engine SHALL suggest specific test cases to add
+1. ❌ **CRÍTICO**: WHEN ícones SVG são usados THEN o sistema SHALL reutilizar componentes de ícones existentes
 
-### Requirement 9
+**Duplicação encontrada:**
+- `select.tsx:73-82` - SVG chevron duplicado (deveria usar `ChevronDownIcon`)
+- `select.tsx:130-140` - SVG check duplicado (deveria usar `CheckIcon`)
+- `toast.tsx:68-70` - SVG X duplicado (deveria usar `XIcon`)
 
-**User Story:** As a developer, I want a quality score for reviewed code, so that I can track improvement over time.
+2. ⚠️ **MELHORIA**: WHEN subcomponentes são criados THEN o sistema SHOULD usar factory pattern para reduzir boilerplate
 
-#### Acceptance Criteria
+**Padrão repetitivo em Card, Alert, Toast, Table:**
+```typescript
+export const ComponentTitle = React.forwardRef<...>(({ className, ...props }, ref) => (
+  <h5 ref={ref} className={cn('...', className)} {...props} />
+));
+ComponentTitle.displayName = 'ComponentTitle';
+```
 
-1. WHEN analysis completes THEN Code_Review_Engine SHALL calculate a quality score from 0 to 100
-2. WHEN CRITICAL findings exist THEN Code_Review_Engine SHALL deduct 12 points per finding from the score
-3. WHEN HIGH findings exist THEN Code_Review_Engine SHALL deduct 6 points per finding from the score
-4. WHEN files exceed 400 lines THEN Code_Review_Engine SHALL deduct 8 points per file from the score
-5. WHEN coverage is below target THEN Code_Review_Engine SHALL deduct points proportional to the gap
+---
 
-### Requirement 10
+## Análise de Tipagem
 
-**User Story:** As a developer, I want suggested patches for findings, so that I can quickly understand how to fix issues.
+### Requirement 5: Type Safety
 
-#### Acceptance Criteria
-
-1. WHEN a finding has a clear fix THEN Code_Review_Engine SHALL include a diff-format patch suggestion
-2. WHEN a patch is generated THEN Code_Review_Engine SHALL limit it to 15 lines maximum per hunk
-3. WHEN patches are displayed THEN Code_Review_Engine SHALL label them as "DO NOT APPLY" (suggestions only)
-4. WHEN a patch is generated THEN Code_Review_Engine SHALL include before and after context lines
-
-### Requirement 11
-
-**User Story:** As a developer, I want review output in multiple formats, so that I can integrate with different tools and workflows.
+**User Story:** Como desenvolvedor, quero tipagem forte e completa, para que erros sejam detectados em tempo de compilação.
 
 #### Acceptance Criteria
 
-1. WHEN format is specified as "md" THEN Code_Review_Engine SHALL output Markdown-formatted report
-2. WHEN format is specified as "json" THEN Code_Review_Engine SHALL output JSON-structured report
-3. WHEN JSON output is generated THEN Code_Review_Engine SHALL conform to a documented schema
-4. WHEN Markdown output is generated THEN Code_Review_Engine SHALL include collapsible sections for large reports
+1. ✅ **APROVADO**: TypeScript strict mode está habilitado
+2. ⚠️ **MELHORIA**: WHEN props são definidas THEN o sistema SHOULD usar tipos mais específicos ao invés de `React.ReactNode` genérico
+3. ❌ **CRÍTICO**: WHEN FormField clona children THEN o sistema SHALL tipar corretamente as props injetadas
 
-### Requirement 12
+**Código Problemático (form-field.tsx:47-51):**
+```typescript
+// Type assertion sem validação
+const childWithProps = React.cloneElement(children, {
+  ...
+} as React.Attributes & Record<string, unknown>);
+```
 
-**User Story:** As a developer, I want the engine to operate in read-only mode, so that I can trust it will not modify my source files.
+4. ⚠️ **MELHORIA**: WHEN interfaces são exportadas THEN o sistema SHOULD usar `interface` para props e `type` para unions/intersections consistentemente
+
+---
+
+## Análise de Acessibilidade
+
+### Requirement 6: WCAG Compliance
+
+**User Story:** Como usuário com deficiência, quero componentes acessíveis, para que eu possa usar a aplicação.
 
 #### Acceptance Criteria
 
-1. WHEN analysis is performed THEN Code_Review_Engine SHALL NOT write to any source files
-2. WHEN analysis is performed THEN Code_Review_Engine SHALL NOT execute any code from the analyzed files
-3. WHEN analysis is performed THEN Code_Review_Engine SHALL NOT run external commands or tests
-4. WHEN patches are suggested THEN Code_Review_Engine SHALL only output them as text, never apply them
+1. ✅ **APROVADO**: Componentes usam roles ARIA apropriados
+2. ✅ **APROVADO**: Alert usa `role="alert"`
+3. ⚠️ **MELHORIA**: WHEN Toast é exibido THEN o sistema SHOULD usar `role="alert"` para mensagens de erro (atualmente usa `role="status"` para todos)
+4. ⚠️ **MELHORIA**: WHEN ícones são decorativos THEN o sistema SHOULD garantir `aria-hidden="true"` (já implementado, mas inconsistente)
+5. ❌ **CRÍTICO**: WHEN Dialog é fechado THEN o sistema SHALL retornar foco ao elemento que o abriu (depende do Radix, mas não há documentação)
 
+---
+
+## Análise de Testes
+
+### Requirement 7: Cobertura de Testes
+
+**User Story:** Como desenvolvedor, quero testes abrangentes, para que eu tenha confiança nas mudanças.
+
+#### Acceptance Criteria
+
+1. ✅ **APROVADO**: Property-based testing implementado com fast-check
+2. ✅ **APROVADO**: Testes de acessibilidade com jest-axe
+3. ⚠️ **MELHORIA**: WHEN componentes são criados THEN o sistema SHOULD ter testes para todos os componentes
+
+**Componentes sem testes:**
+- `card.tsx`
+- `dialog.tsx`
+- `toast.tsx`
+- `table.tsx`
+- `avatar.tsx`
+- `badge.tsx`
+- `breadcrumb.tsx`
+- `dropdown.tsx`
+- `menu.tsx`
+- `container.tsx`
+- `grid.tsx`
+- `stack.tsx`
+- `tabs.tsx`
+- `textarea.tsx`
+- `switch.tsx`
+- `tooltip.tsx`
+
+4. ⚠️ **MELHORIA**: WHEN testes são escritos THEN o sistema SHOULD ter testes de integração entre componentes
+
+---
+
+## Análise de Performance
+
+### Requirement 8: Otimização de Bundle
+
+**User Story:** Como desenvolvedor, quero bundles otimizados, para que a aplicação seja rápida.
+
+#### Acceptance Criteria
+
+1. ✅ **APROVADO**: Tree-shaking habilitado via exports granulares
+2. ⚠️ **MELHORIA**: WHEN componentes são importados THEN o sistema SHOULD suportar imports diretos (`@pineapple-ui/core/button`)
+3. ⚠️ **MELHORIA**: WHEN SVGs são usados THEN o sistema SHOULD considerar sprites ou lazy loading para ícones grandes
+
+---
+
+## Análise de Segurança
+
+### Requirement 9: Práticas de Segurança
+
+**User Story:** Como desenvolvedor, quero código seguro, para que a aplicação não tenha vulnerabilidades.
+
+#### Acceptance Criteria
+
+1. ✅ **APROVADO**: Não há uso de `dangerouslySetInnerHTML`
+2. ✅ **APROVADO**: Não há uso de `eval` ou `Function`
+3. ⚠️ **MELHORIA**: WHEN props são passadas THEN o sistema SHOULD sanitizar URLs em componentes como Avatar
+4. ⚠️ **MELHORIA**: WHEN dependências são usadas THEN o sistema SHOULD ter audit automatizado no CI
+
+---
+
+## Análise de Documentação
+
+### Requirement 10: Documentação de Código
+
+**User Story:** Como desenvolvedor, quero documentação clara, para que eu entenda como usar os componentes.
+
+#### Acceptance Criteria
+
+1. ✅ **APROVADO**: JSDoc presente nos componentes principais
+2. ⚠️ **MELHORIA**: WHEN funções utilitárias são criadas THEN o sistema SHOULD documentar parâmetros e retornos
+3. ⚠️ **MELHORIA**: WHEN tipos são exportados THEN o sistema SHOULD ter documentação TSDoc
+4. ❌ **FALTANDO**: WHEN o projeto é usado THEN o sistema SHALL ter CHANGELOG.md
+
+---
+
+## Análise de Error Handling
+
+### Requirement 11: Tratamento de Erros
+
+**User Story:** Como desenvolvedor, quero erros claros e informativos, para que eu possa debugar facilmente.
+
+#### Acceptance Criteria
+
+1. ✅ **APROVADO**: Classes de erro customizadas definidas em `errors.ts`
+2. ❌ **CRÍTICO**: WHEN erros são definidos THEN o sistema SHALL usar as classes de erro nos componentes (atualmente não são usadas)
+3. ⚠️ **MELHORIA**: WHEN props inválidas são passadas THEN o sistema SHOULD validar e lançar `InvalidPropError`
+
+---
+
+## Análise de Tokens
+
+### Requirement 12: Sistema de Design Tokens
+
+**User Story:** Como designer, quero tokens consistentes, para que o design seja coeso.
+
+#### Acceptance Criteria
+
+1. ✅ **APROVADO**: Tokens bem estruturados com tipagem forte
+2. ✅ **APROVADO**: Uso de oklch para cores perceptualmente uniformes
+3. ⚠️ **MELHORIA**: WHEN tokens são definidos THEN o sistema SHOULD ter validação de contraste WCAG
+4. ❌ **DUPLICAÇÃO**: WHEN tokens são definidos THEN o sistema SHALL ter single source of truth (duplicado em `theme.ts` e `tailwind-config/theme.js`)
+
+---
+
+## Resumo de Prioridades
+
+### P0 - Crítico (Corrigir Imediatamente)
+1. Button loading state ignorado com asChild
+2. FormField type assertion sem validação
+3. Duplicação de SVGs inline
+4. Classes de erro não utilizadas
+5. Duplicação de tokens entre packages
+
+### P1 - Alto (Próximo Sprint)
+1. Extrair estilos para arquivos separados
+2. Adicionar testes para componentes sem cobertura
+3. Criar CHANGELOG.md
+4. Usar ícones do pacote icons nos componentes
+
+### P2 - Médio (Backlog)
+1. Criar pacote de hooks
+2. Adicionar gerador de scaffolding
+3. Implementar imports diretos por componente
+4. Adicionar validação de contraste WCAG
+
+### P3 - Baixo (Nice to Have)
+1. Melhorar documentação TSDoc
+2. Adicionar testes de integração
+3. Implementar lazy loading de ícones

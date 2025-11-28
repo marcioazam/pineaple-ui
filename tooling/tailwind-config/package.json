@@ -9,6 +9,7 @@
     "./theme": "./theme.js"
   },
   "dependencies": {
+    "@pineapple-ui/tokens": "workspace:*",
     "tailwindcss": "^4.0.0"
   }
 }

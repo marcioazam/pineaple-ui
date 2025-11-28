@@ -1,30 +1,9 @@
 import * as React from 'react';
 import { cn } from '@pineapple-ui/utils';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { XIcon } from '@pineapple-ui/icons';
+import { toastVariants, type ToastVariants } from './toast.styles';
 
-const toastVariants = cva(
-  [
-    'pointer-events-auto relative flex w-full items-center justify-between space-x-4',
-    'overflow-hidden rounded-lg border p-4 shadow-lg transition-all',
-  ],
-  {
-    variants: {
-      status: {
-        default: 'bg-white border-neutral-200',
-        success: 'bg-success-50 border-success-200 text-success-800',
-        warning: 'bg-warning-50 border-warning-200 text-warning-800',
-        error: 'bg-danger-50 border-danger-200 text-danger-800',
-      },
-    },
-    defaultVariants: {
-      status: 'default',
-    },
-  }
-);
-
-export interface ToastProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof toastVariants> {
+export interface ToastProps extends React.HTMLAttributes<HTMLDivElement>, ToastVariants {
   /** Auto-dismiss duration in ms (0 to disable) */
   duration?: number;
   /** Callback when toast should be dismissed */
@@ -52,11 +31,15 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
       return undefined;
     }, [duration, onDismiss]);
 
+    // Use role="alert" for error status, role="status" for others
+    const role = status === 'error' ? 'alert' : 'status';
+    const ariaLive = status === 'error' ? 'assertive' : 'polite';
+
     return (
       <div
         ref={ref}
-        role="status"
-        aria-live="polite"
+        role={role}
+        aria-live={ariaLive}
         className={cn(toastVariants({ status }), className)}
         {...props}
       >
@@ -68,9 +51,7 @@ export const Toast = React.forwardRef<HTMLDivElement, ToastProps>(
             className="rounded-md p-1 opacity-70 hover:opacity-100 focus:outline-none focus:ring-2"
             aria-label="Dismiss"
           >
-            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
+            <XIcon size={16} />
           </button>
         )}
       </div>

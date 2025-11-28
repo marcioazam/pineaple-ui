@@ -1,23 +1,8 @@
 import * as React from 'react';
 import { cn } from '@pineapple-ui/utils';
-import { cva, type VariantProps } from 'class-variance-authority';
+import { cardVariants, type CardVariants } from './card.styles';
 
-const cardVariants = cva('rounded-lg', {
-  variants: {
-    variant: {
-      elevated: 'bg-white shadow-md',
-      outlined: 'bg-white border border-neutral-200',
-      filled: 'bg-neutral-50',
-    },
-  },
-  defaultVariants: {
-    variant: 'elevated',
-  },
-});
-
-export interface CardProps
-  extends React.HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof cardVariants> {}
+export interface CardProps extends React.HTMLAttributes<HTMLDivElement>, CardVariants {}
 
 export const Card = React.forwardRef<HTMLDivElement, CardProps>(
   ({ className, variant, ...props }, ref) => (

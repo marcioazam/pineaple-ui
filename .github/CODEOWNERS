@@ -1,0 +1,21 @@
+# CODEOWNERS - Define quem deve revisar cada parte do código
+# Documentação: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# Owners padrão para todo o repositório
+* @pineapple-ui/maintainers
+
+# Pacotes específicos
+/packages/core/ @pineapple-ui/core-team
+/packages/primitives/ @pineapple-ui/core-team
+/packages/tokens/ @pineapple-ui/design-team
+/packages/icons/ @pineapple-ui/design-team
+
+# Configurações críticas
+/.github/ @pineapple-ui/maintainers
+/tooling/ @pineapple-ui/maintainers
+package.json @pineapple-ui/maintainers
+pnpm-lock.yaml @pineapple-ui/maintainers
+
+# Documentação
+/apps/docs/ @pineapple-ui/docs-team
+*.md @pineapple-ui/docs-team

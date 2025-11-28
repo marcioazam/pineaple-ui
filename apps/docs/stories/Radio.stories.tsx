@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { RadioGroup, RadioGroupItem } from '@pineapple-ui/core';
+import { RadioGroup, Radio } from '@pineapple-ui/core';
 
 const meta = {
   title: 'Components/Radio',
@@ -16,15 +16,15 @@ export const Default: Story = {
     <RadioGroup defaultValue="option1">
       <div className="flex flex-col gap-2">
         <label className="flex items-center gap-2">
-          <RadioGroupItem value="option1" />
+          <Radio value="option1" />
           Option 1
         </label>
         <label className="flex items-center gap-2">
-          <RadioGroupItem value="option2" />
+          <Radio value="option2" />
           Option 2
         </label>
         <label className="flex items-center gap-2">
-          <RadioGroupItem value="option3" />
+          <Radio value="option3" />
           Option 3
         </label>
       </div>
@@ -37,15 +37,15 @@ export const Horizontal: Story = {
     <RadioGroup defaultValue="small" orientation="horizontal">
       <div className="flex gap-4">
         <label className="flex items-center gap-2">
-          <RadioGroupItem value="small" />
+          <Radio value="small" />
           Small
         </label>
         <label className="flex items-center gap-2">
-          <RadioGroupItem value="medium" />
+          <Radio value="medium" />
           Medium
         </label>
         <label className="flex items-center gap-2">
-          <RadioGroupItem value="large" />
+          <Radio value="large" />
           Large
         </label>
       </div>

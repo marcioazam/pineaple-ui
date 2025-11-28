@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Slot } from '@radix-ui/react-slot';
+import { Slot, Slottable } from '@radix-ui/react-slot';
 import { cn } from '@pineapple-ui/utils';
 import { buttonVariants, type ButtonVariants } from './button.styles';
 
@@ -72,30 +72,20 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref
   ) => {
     const Comp = asChild ? Slot : 'button';
-
-    // When asChild is true, we pass children directly without wrapping
-    if (asChild) {
-      return (
-        <Comp
-          ref={ref}
-          className={cn(buttonVariants({ variant, size }), className)}
-          {...props}
-        >
-          {children}
-        </Comp>
-      );
-    }
+    const isDisabled = disabled || loading;
 
     return (
       <Comp
         ref={ref}
         className={cn(buttonVariants({ variant, size }), className)}
-        disabled={disabled || loading}
+        disabled={isDisabled}
+        aria-busy={loading || undefined}
+        aria-disabled={isDisabled || undefined}
         {...props}
       >
         {loading && <Spinner className="mr-2" />}
         {!loading && leftIcon && <span className="shrink-0">{leftIcon}</span>}
-        {children}
+        <Slottable>{children}</Slottable>
         {rightIcon && <span className="shrink-0">{rightIcon}</span>}
       </Comp>
     );
