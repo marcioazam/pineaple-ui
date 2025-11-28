@@ -52,7 +52,10 @@ export function useControllableState<T>({
 function useUncontrolledState<T>({
   defaultProp,
   onChange,
-}: Omit<UseControllableStateParams<T>, 'prop'>) {
+}: {
+  defaultProp?: T | undefined;
+  onChange?: ((value: T) => void) | undefined;
+}) {
   const [value, setValue] = React.useState(defaultProp);
   const prevValueRef = React.useRef(value);
 
